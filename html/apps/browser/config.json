@@ -1,0 +1,7 @@
+{
+    "name": "Example",
+    "description": "This is an Example",
+    "version": "v1.0",
+
+    "permission": "tablet.browser"
+}
