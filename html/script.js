@@ -8,6 +8,26 @@ function login() {
     document.querySelector(".apps").classList.remove("hide")
 }
 
-function openApp(appName) {
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function drag(event) {
+    event.dataTransfer.setData("text", event.target.dataset.index);
+}
+
+function drop(event) {
+    event.preventDefault();
     
+    let draggedIndex = event.dataTransfer.getData("text");
+    let draggedElement = document.querySelector(`td[data-index='${draggedIndex}']`);
+    
+    if (event.target.tagName === "TD") {
+        let targetElement = event.target;
+        
+        // Apps tauschen
+        let temp = targetElement.innerHTML;
+        targetElement.innerHTML = draggedElement.innerHTML;
+        draggedElement.innerHTML = temp;
+    }
 }
