@@ -153,9 +153,11 @@ td {
     border-radius: 10px;
     cursor: pointer;
 }
-
-.empty-app {
-    background: none;
+.empty-slot {
+    width: 90px;
+    height: 110px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
 }
 
 .app {
