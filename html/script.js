@@ -8,5 +8,5 @@ function login() {
 }
 
 function openApp(appName) {
-
+    
 }
