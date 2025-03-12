@@ -19,15 +19,79 @@
                         <label for="input-password"><img src="./img/lock.png"></label>
                     </div>
                     <div class="buttons">
-                        <div class="fingerprint">
+                        <div class="fingerprint hide">
                             <button type="submit"><img src="./img/fingerprint.png"></button>
                         </div>
                         <div class="submit">
-                            <button type="submit"><img src="./img/arrow_right.png"></button>
+                            <button type="submit" onclick="login()"><img src="./img/arrow_right.png"></button>
                         </div>
+                    </div>
+                </div>
+                <div class="apps">
+                    <table id="apps">
+                        <tr>
+                            <td onclick="openApp(app-store)">
+                                <img src="./img/app_store.png">
+                                <span>App Store</span>
+                            </td>
+                            <td>
+                                <img src="./img/app_store.png">
+                                <span>App Store</span>
+                            </td>
+                            <td>
+                                <img src="./img/app_store.png">
+                                <span>App Store</span>
+                            </td>
+                            <td>
+                                <img src="./img/app_store.png">
+                                <span>App Store</span>
+                            </td>
+                            <td>
+                                <img src="./img/app_store.png">
+                                <span>App Store</span>
+                            </td>
+                            <td>
+                                <img src="./img/app_store.png">
+                                <span>App Store</span>
+                            </td>
+                            <td>
+                                <img src="./img/app_store.png">
+                                <span>App Store</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="./img/app_store.png">
+                                <span>App Store</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="./img/app_store.png">
+                                <span>App Store</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <img src="./img/app_store.png">
+                                <span>App Store</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="nav-bar hide">
+                    <div class="open-apps">
+                        <button><img src="./img/menu.png"></button>
+                    </div>
+                    <div class="home">
+                        <button><img src="./img/home.png"></button>
+                    </div>
+                    <div class="back">
+                        <button><img src="./img/arrow_back.png"></button>
                     </div>
                 </div>
             </div>
         </div>
+        <script src="./script.js"></script>
     </body>
 </html>
