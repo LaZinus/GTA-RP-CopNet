@@ -154,10 +154,11 @@ td {
     cursor: pointer;
 }
 .empty-slot {
-    width: 90px;
-    height: 110px;
+    width: 105px;
+    height: 90px;
     background: rgba(255, 255, 255, 0.05);
     border: 2px dashed rgba(255, 255, 255, 0.2);
+    cursor: default;
 }
 
 .app {
@@ -178,10 +179,6 @@ td span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.empty-slot {
-    cursor: default;
 }
 
 /* 📌 Nav-Bar fix unten */
