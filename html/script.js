@@ -1,3 +1,51 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const table = document.getElementById("appsTable");
+    const slotWidth = 115; // Breite eines Slots (inkl. Gap)
+    const slotHeight = 100; // Höhe eines Slots (inkl. Gap)
+    const gap = 10; // Abstand zwischen Slots
+
+    function createSlots() {
+        table.innerHTML = ""; // Löscht alle bestehenden Zeilen und Spalten
+
+        // Ermittelt die Breite und Höhe des Containers
+        const containerWidth = table.parentElement.offsetWidth;
+        const containerHeight = table.parentElement.offsetHeight;
+
+        if (containerWidth === 0 || containerHeight === 0) {
+            console.warn("Container hat keine sichtbare Größe.");
+            return;
+        }
+
+        // Berechnet die Anzahl der Spalten (Spaltenanzahl ≈ Bildschirmbreite / Slotgröße)
+        const columns = Math.floor((containerWidth + gap) / (slotWidth + gap));
+        const rows = Math.floor((containerHeight + gap) / (slotHeight + gap));
+        const totalSlots = columns * rows;
+
+        console.log(`Erstelle ${totalSlots} Slots (${columns} Spalten x ${rows} Reihen)`);
+
+        for (let row = 0; row < rows; row++) {
+            let tr = document.createElement("tr");
+
+            for (let col = 0; col < columns; col++) {
+                let td = document.createElement("td");
+                td.classList.add("app-slot");
+                td.setAttribute("data-index", row * columns + col);
+                td.setAttribute("draggable", "true");
+                td.setAttribute("ondragstart", "drag(event)");
+                td.setAttribute("ondrop", "drop(event)");
+                td.setAttribute("ondragover", "allowDrop(event)");
+
+                tr.appendChild(td);
+            }
+
+            table.appendChild(tr);
+        }
+    }
+
+    setTimeout(createSlots, 100); // Verzögert das Erstellen, um Größenprobleme zu vermeiden
+    window.addEventListener("resize", createSlots); // Falls das Fenster verändert wird, aktualisieren
+});
+
 function login() {
     let loginScreen = document.querySelector(".login-screen")
     loginScreen.style.animation = "slideUp 0.5s ease forwards";

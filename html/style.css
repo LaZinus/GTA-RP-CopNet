@@ -131,6 +131,8 @@ body {
 
 .apps {
     width: 100%;
+    height: 87%;
+    background: #ff00ff;
     display: flex;
     justify-content: start;
     align-items: start;
