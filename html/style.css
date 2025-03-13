@@ -180,6 +180,10 @@ td span {
     text-overflow: ellipsis;
 }
 
+.empty-slot {
+    cursor: default;
+}
+
 /* 📌 Nav-Bar fix unten */
 .nav-bar {
     position: absolute;

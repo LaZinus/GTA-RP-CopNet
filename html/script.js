@@ -34,10 +34,16 @@ function drop(event) {
         if (targetElement.classList.contains("empty-slot")) {
             targetElement.classList.remove("empty-slot");
             targetElement.classList.add("app-slot");
-            targetElement.draggable = "true";
+            targetElement.setAttribute('draggable', true);
+            targetElement.setAttribute('ondragstart', "drag(event)");
+            targetElement.setAttribute('ondrop', "drop(event)");
+            targetElement.setAttribute('ondragover', "allowDrop(event)");
             draggedElement.classList.remove("app-slot");
             draggedElement.classList.add("empty-slot");
-            draggedElement.draggable = "false";
+            draggedElement.setAttribute('draggable', false);
+            draggedElement.removeAttribute('ondragstart');
+            draggedElement.setAttribute('ondrop', "drop(event)");
+            draggedElement.setAttribute('ondragover', "allowDrop(event)");
         }
 
         // Datenindex umtauschen, damit die Logik stimmt
