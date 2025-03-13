@@ -5,9 +5,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const gap = 10; // Abstand zwischen Slots
 
     function createSlots() {
-        table.innerHTML = ""; // Löscht alle bestehenden Zeilen und Spalten
+        table.innerHTML = ""; // Alle bestehenden Slots löschen
 
-        // Ermittelt die Breite und Höhe des Containers
+        // Breite und Höhe des Containers holen
         const containerWidth = table.parentElement.offsetWidth;
         const containerHeight = table.parentElement.offsetHeight;
 
@@ -16,12 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Berechnet die Anzahl der Spalten (Spaltenanzahl ≈ Bildschirmbreite / Slotgröße)
+        // Anzahl der Spalten und Zeilen berechnen
         const columns = Math.floor((containerWidth + gap) / (slotWidth + gap));
         const rows = Math.floor((containerHeight + gap) / (slotHeight + gap));
         const totalSlots = columns * rows;
 
         console.log(`Erstelle ${totalSlots} Slots (${columns} Spalten x ${rows} Reihen)`);
+
+        let index = 0; // Startet garantiert bei 0
 
         for (let row = 0; row < rows; row++) {
             let tr = document.createElement("tr");
@@ -29,11 +31,12 @@ document.addEventListener("DOMContentLoaded", () => {
             for (let col = 0; col < columns; col++) {
                 let td = document.createElement("td");
                 td.classList.add("app-slot");
-                td.setAttribute("data-index", row * columns + col);
-                td.setAttribute("draggable", "true");
-                td.setAttribute("ondragstart", "drag(event)");
+                td.setAttribute("data-index", index);
+                td.setAttribute("draggable", "false");
                 td.setAttribute("ondrop", "drop(event)");
                 td.setAttribute("ondragover", "allowDrop(event)");
+
+                index++; // Zählt sauber weiter
 
                 tr.appendChild(td);
             }
@@ -42,8 +45,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    setTimeout(createSlots, 100); // Verzögert das Erstellen, um Größenprobleme zu vermeiden
-    window.addEventListener("resize", createSlots); // Falls das Fenster verändert wird, aktualisieren
+    setTimeout(createSlots, 100); // Verhindert Größenprobleme beim Laden
+    window.addEventListener("resize", createSlots); // Aktualisiert die Slots bei Größenänderung
+    document.querySelector(".submit").addEventListener("onclick", setTimeout(() => {
+        createSlots
+    }, 450))
+    document.querySelector(".fingerprint").addEventListener("onclick", setTimeout(() => {
+        createSlots
+    }, 450))
 });
 
 function login() {
