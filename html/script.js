@@ -29,16 +29,31 @@ document.addEventListener("DOMContentLoaded", () => {
             let tr = document.createElement("tr");
 
             for (let col = 0; col < columns; col++) {
-                let td = document.createElement("td");
-                td.classList.add("app-slot");
-                td.setAttribute("data-index", index);
-                td.setAttribute("draggable", "false");
-                td.setAttribute("ondrop", "drop(event)");
-                td.setAttribute("ondragover", "allowDrop(event)");
+                //test-app
+                if (index == 0) {
+                    let td = document.createElement("td");
+                    td.classList.add("app-slot");
+                    td.setAttribute("data-index", index);
+                    td.setAttribute("draggable", "true");
+                    td.setAttribute('ondragstart', "drag(event)");
+                    td.setAttribute("ondrop", "drop(event)");
+                    td.setAttribute("ondragover", "allowDrop(event)");
+                    td.addEventListener("click", startApp("app-store"))
+
+                    tr.appendChild(td);
+                } else {
+                    let td = document.createElement("td");
+                    td.classList.add("empty-slot");
+                    td.setAttribute("data-index", index);
+                    td.setAttribute("draggable", "false");
+                    td.setAttribute("ondrop", "drop(event)");
+                    td.setAttribute("ondragover", "allowDrop(event)");
+
+                    tr.appendChild(td);
+                }
 
                 index++; // Zählt sauber weiter
 
-                tr.appendChild(td);
             }
 
             table.appendChild(tr);
@@ -47,12 +62,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setTimeout(createSlots, 100); // Verhindert Größenprobleme beim Laden
     window.addEventListener("resize", createSlots); // Aktualisiert die Slots bei Größenänderung
-    document.querySelector(".submit").addEventListener("onclick", setTimeout(() => {
-        createSlots
-    }, 450))
-    document.querySelector(".fingerprint").addEventListener("onclick", setTimeout(() => {
-        createSlots
-    }, 450))
+    document.querySelector(".submit").addEventListener("click", function () {
+        login();
+        setTimeout(() => {
+            createSlots();
+        }, 450);
+    });
 });
 
 function login() {
@@ -141,4 +156,8 @@ function mouseOver(event) {
 
 function mouseOut(event) {
     event.target.style.background = "rgba(255, 255, 255, 0.1)";
+}
+
+function startApp(appName) {
+    
 }
