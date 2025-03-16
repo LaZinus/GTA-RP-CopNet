@@ -1,163 +1,207 @@
+window.addEventListener("message", (event) => {
+    const data = event.data;
+    const container = document.querySelector('.container');
+    const body = document.querySelector('.body');
+
+    switch (data.action) {
+        case "opentablet":
+            container.classList.remove("hide");
+            container.style.animation = "tabletSlideUp 0.5s ease-out forwards";
+            body.style.background = "rgba(0,0,0,0.5)";
+            break;
+        
+        case "close_tablet":
+            closeTablet();
+            break;
+    }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     const table = document.getElementById("appsTable");
-    const slotWidth = 115; // Breite eines Slots (inkl. Gap)
-    const slotHeight = 100; // Höhe eines Slots (inkl. Gap)
-    const gap = 10; // Abstand zwischen Slots
 
     function createSlots() {
-        table.innerHTML = ""; // Alle bestehenden Slots löschen
+        table.innerHTML = "";
 
-        // Breite und Höhe des Containers holen
-        const containerWidth = table.parentElement.offsetWidth;
-        const containerHeight = table.parentElement.offsetHeight;
+        const slotWidth = 115;
+        const slotHeight = 100;
+        const gap = 10;
+        
+        const container = table.parentElement;
+        const containerWidth = container.offsetWidth;
+        const containerHeight = container.offsetHeight;
 
-        if (containerWidth === 0 || containerHeight === 0) {
-            console.warn("Container hat keine sichtbare Größe.");
-            return;
-        }
+        if (containerWidth === 0 || containerHeight === 0) return;
 
-        // Anzahl der Spalten und Zeilen berechnen
         const columns = Math.floor((containerWidth + gap) / (slotWidth + gap));
         const rows = Math.floor((containerHeight + gap) / (slotHeight + gap));
         const totalSlots = columns * rows;
 
-        console.log(`Erstelle ${totalSlots} Slots (${columns} Spalten x ${rows} Reihen)`);
-
-        let index = 0; // Startet garantiert bei 0
-
+        let index = 0;
         for (let row = 0; row < rows; row++) {
             let tr = document.createElement("tr");
 
             for (let col = 0; col < columns; col++) {
-                //test-app
-                if (index == 0) {
-                    let td = document.createElement("td");
+                let td = document.createElement("td");
+                td.dataset.index = index;
+
+                if (index === 0) {
                     td.classList.add("app-slot");
-                    td.setAttribute("data-index", index);
-                    td.setAttribute("draggable", "true");
-                    td.setAttribute('ondragstart', "drag(event)");
-                    td.setAttribute("ondrop", "drop(event)");
-                    td.setAttribute("ondragover", "allowDrop(event)");
-                    td.addEventListener("click", startApp("app-store"))
-
-                    tr.appendChild(td);
+                    td.innerHTML = `<img src="./img/app-icon.png" alt="App">`;
+                    td.addEventListener("mousedown", startDrag);
+                    td.addEventListener("click", () => startApp("app-store"));
                 } else {
-                    let td = document.createElement("td");
                     td.classList.add("empty-slot");
-                    td.setAttribute("data-index", index);
-                    td.setAttribute("draggable", "false");
-                    td.setAttribute("ondrop", "drop(event)");
-                    td.setAttribute("ondragover", "allowDrop(event)");
-
-                    tr.appendChild(td);
+                    td.classList.add("hide-app");
                 }
 
-                index++; // Zählt sauber weiter
-
+                tr.appendChild(td);
+                index++;
             }
 
             table.appendChild(tr);
         }
     }
 
-    setTimeout(createSlots, 100); // Verhindert Größenprobleme beim Laden
-    window.addEventListener("resize", createSlots); // Aktualisiert die Slots bei Größenänderung
-    document.querySelector(".submit").addEventListener("click", function () {
+    setTimeout(createSlots, 100);
+    window.addEventListener("resize", createSlots);
+
+    document.querySelector(".submit").addEventListener("click", () => {
         login();
-        setTimeout(() => {
-            createSlots();
-        }, 450);
+        setTimeout(createSlots, 450);
     });
 });
 
+// 📌 Login-Funktion
 function login() {
-    let loginScreen = document.querySelector(".login-screen")
+    const loginScreen = document.querySelector(".login-screen");
     loginScreen.style.animation = "slideUp 0.5s ease forwards";
-    setTimeout(() => {
-        loginScreen.classList.add("hide");
-    }, 450)
-    document.querySelector(".nav-bar").classList.remove("hide")
-    document.querySelector(".apps").classList.remove("hide")
-}
-function allowDrop(event) {
-    event.preventDefault();
+    setTimeout(() => loginScreen.classList.add("hide"), 450);
+    
+    document.querySelector(".nav-bar").classList.remove("hide");
+    document.querySelector(".apps").classList.remove("hide");
 }
 
-function drag(event) {
-    event.dataTransfer.setData("text", event.target.closest("td").dataset.index);
+// 📌 Alternative Drag-and-Drop-Methode für FiveM
+let draggedElement = null;
+let ghostElement = null;
+let offsetX = 0;
+let offsetY = 0;
+
+function startDrag(event) {
+    draggedElement = event.target.closest("td");
+
+    if (!draggedElement || draggedElement.classList.contains("empty-slot")) return;
+
+    let rect = draggedElement.getBoundingClientRect();
+    offsetX = event.clientX - rect.left;
+    offsetY = event.clientY - rect.top;
+
+    // Ghost-Element erstellen
+    ghostElement = draggedElement.cloneNode(true);
+    ghostElement.style.position = "absolute";
+    ghostElement.style.width = `${rect.width}px`;
+    ghostElement.style.height = `${rect.height}px`;
+    ghostElement.style.opacity = "0.7";
+    ghostElement.style.zIndex = "1000";
+    ghostElement.style.pointerEvents = "none"; // Keine Interaktion
+
+    document.body.appendChild(ghostElement);
+
+    document.addEventListener("mousemove", moveElement);
+    document.addEventListener("mouseup", stopDrag);
 
     let emptySlots = document.querySelectorAll(".empty-slot");
-
-    emptySlots.forEach(slot => {
-        slot.style.background = "rgba(255, 255, 255, 0.05)"
-        slot.style.border = "2px dashed rgba(255, 255, 255, 0.2)"
-    })
+    emptySlots.forEach((slot) => {
+        slot.classList.remove("hide-app");
+    });
 }
 
-function drop(event) {
-    event.preventDefault();
+function moveElement(event) {
+    if (!ghostElement) return;
 
-    let draggedIndex = event.dataTransfer.getData("text");
-    let draggedElement = document.querySelector(`td[data-index='${draggedIndex}']`);
+    ghostElement.style.left = `${event.clientX - offsetX}px`;
+    ghostElement.style.top = `${event.clientY - offsetY}px`;
+}
 
-    // Ziel muss entweder ein "app-slot" oder ein "empty-slot" sein
-    if (event.target.classList.contains("app-slot") || event.target.classList.contains("empty-slot")) {
-        let targetElement = event.target;
+function stopDrag(event) {
+    document.removeEventListener("mousemove", moveElement);
+    document.removeEventListener("mouseup", stopDrag);
 
-        // Falls es ein leerer Platz ist, App dahin verschieben
-        let temp = targetElement.innerHTML;
-        targetElement.innerHTML = draggedElement.innerHTML;
-        draggedElement.innerHTML = temp;
+    let emptySlots = document.querySelectorAll(".empty-slot");
+    emptySlots.forEach((slot) => {
+        slot.classList.add("hide-app");
+    });
 
-        // Klassen umtauschen, damit die App wirklich wechselt
-        if (targetElement.classList.contains("empty-slot")) {
-            targetElement.classList.remove("empty-slot");
-            targetElement.classList.add("app-slot");
-            targetElement.style.border = "none"
-            targetElement.addEventListener("mouseover", mouseOver);
-            targetElement.addEventListener("mouseout", mouseOut);
-            targetElement.setAttribute('draggable', true);
-            targetElement.setAttribute('ondragstart', "drag(event)");
-            targetElement.setAttribute('ondrop', "drop(event)");
-            targetElement.setAttribute('ondragover', "allowDrop(event)");
-            draggedElement.classList.remove("app-slot");
-            draggedElement.classList.add("empty-slot");
-            draggedElement.setAttribute('draggable', false);
-            draggedElement.removeAttribute('ondragstart');
-            draggedElement.setAttribute('ondrop', "drop(event)");
-            draggedElement.setAttribute('ondragover', "allowDrop(event)");
-            draggedElement.removeEventListener("mouseover", mouseOver);
-            draggedElement.removeEventListener("mouseout", mouseOut);
-        }
+    if (!draggedElement || !ghostElement) return;
 
-        // Datenindex umtauschen, damit die Logik stimmt
-        let tempIndex = targetElement.dataset.index;
-        targetElement.dataset.index = draggedElement.dataset.index;
-        draggedElement.dataset.index = tempIndex;
+    let targetElement = document.elementFromPoint(event.clientX, event.clientY)?.closest("td");
 
-        let emptySlots = document.querySelectorAll(".empty-slot");
-
-        emptySlots.forEach(slot => {
-            slot.style.background = "none"
-            slot.style.border = "none"
-        })
+    if (targetElement && targetElement !== draggedElement && targetElement.classList.contains("empty-slot")) {
+        swapSlots(draggedElement, targetElement);
     }
+
+    // Ghost-Element entfernen
+    document.body.removeChild(ghostElement);
+    ghostElement = null;
+    draggedElement = null;
 }
 
-// Event Listener für Drop aktivieren
+// 🛠 Verbesserte Swap-Funktion
+function swapSlots(el1, el2) {
+    // Speichere die Referenzen zu den Originalelementen
+    let tempContent = el1.innerHTML;
+    let tempClass = el1.className;
+
+    el1.innerHTML = el2.innerHTML;
+    el1.className = el2.className;
+
+    el2.innerHTML = tempContent;
+    el2.className = tempClass;
+
+    // Stelle sicher, dass das Drag-Event wieder hinzugefügt wird
+    el1.addEventListener("mousedown", startDrag);
+    el2.addEventListener("mousedown", startDrag);
+}
+
+// Events für bestehende Slots setzen
 document.querySelectorAll("td").forEach(td => {
-    td.ondrop = drop;
-    td.ondragover = allowDrop;
+    td.addEventListener("mousedown", startDrag);
 });
 
-function mouseOver(event) {
-    event.target.style.background = "rgba(255, 255, 255, 0.2)";
-}
-
-function mouseOut(event) {
-    event.target.style.background = "rgba(255, 255, 255, 0.1)";
-}
-
+// 📌 App starten (noch nicht implementiert)
 function startApp(appName) {
-    
+    console.log(`App gestartet: ${appName}`);
 }
+
+// 📌 Tablet schließen
+function closeTablet() {
+    const container = document.querySelector(".container");
+    const body = document.querySelector(".body");
+    const apps = document.querySelector(".apps");
+    const loginScreen = document.querySelector(".login-screen");
+    const navBar = document.querySelector(".nav-bar");
+
+    container.style.animation = "tabletSlideDown 0.5s ease-out forwards";
+
+    setTimeout(() => {
+        container.classList.add("hide");
+        body.style.background = "none";
+        apps.classList.add("hide");
+        loginScreen.classList.remove("hide");
+        loginScreen.style.animation = "none";
+        navBar.classList.add("hide");
+
+        fetch(`https://${GetParentResourceName()}/tablet`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+            body: JSON.stringify({ action: 'closeTablet' })
+        }).then(resp => resp.json()).then(resp => console.log(resp.message));
+    }, 450);
+}
+
+// 📌 ESC-Taste für Tablet schließen
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        closeTablet();
+    }
+});

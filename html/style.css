@@ -8,11 +8,11 @@
 }
 
 body {
-    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
 }
 
 .container {
@@ -122,9 +122,13 @@ body {
 .head-bar {
     background: rgba(255, 255, 255, 0.35);
     text-align: end;
+    height: 3%;
+    display: flex;
+    align-items: center;
 }
 .head-bar span {
-    margin-right: 10px;
+    margin-left: auto;
+    margin-right: 5px;
 }
 
 /* 📌 Apps-Grid */
@@ -136,6 +140,7 @@ body {
     justify-content: start;
     align-items: start;
     padding: 10px;
+    user-select: none;
 }
 
 #appsTable {
@@ -160,10 +165,21 @@ td {
 .empty-slot {
     width: 105px;
     height: 90px;
-    cursor: default;
-    background: none;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px dotted rgba(255, 255, 255, 0.5);
 }
 .empty-slot:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.hide-app {
+    background: none;
+    border: none;
+    cursor: default;
+}
+
+.hide-app:hover {
     background: none;
 }
 
@@ -206,6 +222,16 @@ td span {
     border: none;
     outline: none;
     cursor: pointer;
+    width: 50px;
+}
+
+.quit-button {
+    position: absolute;
+    height: 100%;
+    background: none;
+    border: 2px solid #aaa;
+    border-radius: 10px;
+    left: 5px;
 }
 
 .nav-bar button:hover {
@@ -229,5 +255,23 @@ td span {
     100% {
         transform: translateY(-100%);
         opacity: 0;
+    }
+}
+
+@keyframes tabletSlideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes tabletSlideDown {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(100%);
     }
 }

@@ -1,8 +1,19 @@
-fx_version 'cerulean'
+fx_version 'bodacious'
 game 'gta5'
 
-author 'UNREALISTIC - LaZinus'
-description 'Adds an Tablet for Cops, Gangs and more'
+author '[UNREALISTIC] LaZinus'
 version '1.0.0'
 
-client_script './client/client.lua'
+client_script 'client.lua'
+server_script 'server.lua'
+shared_script 'shared.lua'
+
+ui_page 'html/index.html'
+
+files {
+    'html/index.html',
+    'html/style.css',
+    'html/script.js',
+    'html/img/*',
+    'html/apps/*',
+}
